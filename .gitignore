@@ -1,3 +1,4 @@
 node_modules
-data/product.json
+data/products.json
 .DS_Store
+views/.DS_Store
