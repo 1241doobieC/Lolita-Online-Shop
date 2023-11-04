@@ -1,6 +1,6 @@
 ## 專案說明
 
-- 安裝： `npm install`
+- 安裝： `pnpm install`
 - 執行： `pnpm start`
 
 ## 實作功能
