@@ -1,7 +1,7 @@
 ## 專案說明
 
 - 安裝： `npm install`
-- 執行： `start:dev`
+- 執行： `pnpm start`
 
 ## 實作功能
 - [ ] 第三方登入
