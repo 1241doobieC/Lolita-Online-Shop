@@ -23,13 +23,13 @@ module.exports = class Product{
     }
 
     save(){
-        
-        this.id = Math.random().toString();
         getProductsFromFile( products => {
             if(this.id){
-                 const existingProductIndex = products.findIndex( prod => prod.id === this.id);
-                 let updatedProducts = [...products];
-                 updatedProducts[existingProductIndex] = this;
+                const existingProductIndex = products.findIndex( 
+                    prod => prod.id === this.id
+                );
+                let updatedProducts = [...products];
+                updatedProducts[existingProductIndex] = this;
                 fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
                     
                 });
