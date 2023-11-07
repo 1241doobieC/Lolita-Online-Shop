@@ -6,4 +6,4 @@ data/cart.json
 .DS_Store
 views/.DS_Store
 
-util/db.js
+.env
