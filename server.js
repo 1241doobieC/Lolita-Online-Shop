@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const adminRoutes =require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/error');
+const dbConnect = require('./util/db');
 const app = express()
 
 app.set('view engine', 'ejs');
@@ -18,5 +19,7 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
 app.use( errorController.get404  );
-
-app.listen(3000);
+dbConnect( client => {
+    console.log(client);
+    app.listen(3000);
+});
