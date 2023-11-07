@@ -9,7 +9,7 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.postAddProduct = (req, res) => {
-    let title = req.body.title; //follow with 'name'
+    let title = req.body.title; 
     let imageUrl = req.body.imageUrl;
     let price = Number(req.body.price);
     let description = req.body.description;
@@ -40,7 +40,7 @@ exports.getEditProduct = (req, res, next) => {
 
 exports.postEditProduct = (req, res, next) => {
     const proId = req.body.productId;
-    const updatedPrice = req.body.price;    
+    const updatedPrice = Number(req.body.price);    
     const updatedImageUrl = req.body.imageUrl;
     const updatedTitle = req.body.title;
     const updatedDesc = req.body.description;
@@ -61,4 +61,6 @@ exports.getProducts = (req, res) => {
 
 exports.postDeleteProduct = (req, res, next) => {
     const proId = req.body.productId;
+    Product.deleteById(proId);
+    res.redirect('/admin/products');
 }
