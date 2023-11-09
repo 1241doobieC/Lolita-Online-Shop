@@ -6,7 +6,9 @@ const bodyParser = require('body-parser');
 const adminRoutes =require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/error');
-const dbConnect = require('./util/db');
+const mongoConnect = require('./util/db').mongoConnect;
+const User = require('./models/user');
+
 const app = express()
 
 app.set('view engine', 'ejs');
@@ -15,11 +17,19 @@ app.set('views', 'views');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use( (req, res, next) => {
+    User.findById('654bd13d9a998a4040a5227a')
+        .then(user => {
+            req.user = new User(user.name, user.email, user.cart, user._id);
+            next();
+        })
+        .catch(error => {console.log(error)})
+});
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
 app.use( errorController.get404  );
-dbConnect( client => {
-    console.log(client);
+mongoConnect( () => {
     app.listen(3000);
-});
+}); 
