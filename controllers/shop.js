@@ -79,19 +79,21 @@ exports.postOrders = (req, res, next) => {
     req.user.addOrder()
         .then(result => {
             console.log(result);
-            res.redirect('/');
+            res.redirect('/orders');
         })
         .catch(err => console.log(err));
 }
 exports.getOrders = (req, res, next) => {
-    // Product.fetchAll( products => {
-    //     res.render('shop/orders', {
-    //         prods: products,
-    //         pageTitle: 'Your Orders',
-    //         path: '/orders',
-    //     });
-    // });
-    // res.redirect('/orders');
+    req.user
+        .getOrders()
+        .then(orders => {
+            res.render('shop/orders', {
+                orders: orders,
+                pageTitle: 'Your Orders',
+                path: '/orders',
+            });
+        })
+        .catch(err => console.log(err));
 }
 
 exports.getCheckOut = (req ,res, next) => {
