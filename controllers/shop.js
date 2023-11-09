@@ -75,14 +75,23 @@ exports.postCartDeleteProduct = (req, res, next) => {
         });
 }
 
+exports.postOrders = (req, res, next) => {
+    req.user.addOrder()
+        .then(result => {
+            console.log(result);
+            res.redirect('/');
+        })
+        .catch(err => console.log(err));
+}
 exports.getOrders = (req, res, next) => {
-    Product.fetchAll( products => {
-        res.render('shop/orders', {
-            prods: products,
-            pageTitle: 'Your Orders',
-            path: '/orders',
-        });
-    });
+    // Product.fetchAll( products => {
+    //     res.render('shop/orders', {
+    //         prods: products,
+    //         pageTitle: 'Your Orders',
+    //         path: '/orders',
+    //     });
+    // });
+    // res.redirect('/orders');
 }
 
 exports.getCheckOut = (req ,res, next) => {
