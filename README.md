@@ -2,7 +2,7 @@
 
 - 安裝： `pnpm install`
 - 執行： `pnpm start`
-- 資料庫： [MongoDB] (<https://www.mongodb.com/docs/drivers/node/current/fundamentals/connection/>)
+- 資料庫： [`MongoDB`](<https://www.mongodb.com/docs/drivers/node/current/fundamentals/connection/>)
 
 ## 實作功能
 - [ ] 第三方登入
