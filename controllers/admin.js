@@ -1,10 +1,12 @@
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
+    
     res.render('admin/edit-product', {
         pageTitle: 'Add Product',
         path: '/admin/add-product',
-        editing: false
+        editing: false,
+        isAuthenticated: req.session.isLoggedIn
     });
 }
 
@@ -13,8 +15,14 @@ exports.postAddProduct = (req, res) => {
     let imageUrl = req.body.imageUrl;
     let price = Number(req.body.price);
     let description = req.body.description;
-    const product = new Product(title, price, description, imageUrl, null, req.user._id);
-    product.save()
+    const product = new Product({
+        title: title, 
+        price: price,
+        description: description, 
+        imageUrl: imageUrl
+    });
+    product
+        .save()
         .then(result => {
             console.log("Product saved.");
             res.redirect('/admin/products');
@@ -38,7 +46,8 @@ exports.getEditProduct = (req, res, next) => {
                 pageTitle: 'Edit Product',
                 path: '/admin/edit-product',
                 editing: editMode,
-                product: product
+                product: product,
+                isAuthenticated: req.session.isLoggedIn
             });
         })
         .catch(err => console.log(err))
@@ -62,13 +71,14 @@ exports.postEditProduct = (req, res, next) => {
 }
 
 exports.getProducts = (req, res) => {
-    Product.fetchAll()
+    Product.find()
         .then(
             products => { 
                 res.render('admin/products', {
                 prods: products,
                 pageTitle: 'Admin Products',
                 path: '/admin/products',
+                isAuthenticated: req.session.isLoggedIn
             })
         })
         .catch(err => console.log(err));
