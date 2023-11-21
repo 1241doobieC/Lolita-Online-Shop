@@ -3,8 +3,8 @@
 - 安裝： `pnpm install`
 - 執行： `pnpm start`
 - 資料庫： [`MongoDB`](<https://www.mongodb.com/docs/drivers/node/current/fundamentals/connection/>)
-    1. Set `DB_CONNECT`, `MONGODB_URI`, `SECRET` in your `.env`
-    2. Create following collection: `orders`, `products`, `sessions`, `users`
+    - Set `DB_CONNECT`, `MONGODB_URI`, `SECRET` in your `.env`
+    - Create following collections: `orders`, `products`, `sessions`, `users`
 
 
 ## 實作功能
