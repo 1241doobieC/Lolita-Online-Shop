@@ -10,6 +10,11 @@
         <% if(errorMessage) { %>
                 <div class="user-message user-message--error"> <%= errorMessage %> </div>
         <% } %>
+        <form action="/auth/google" method="post" class="login-form">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <!-- <a href="/auth/google" type="button" class="btn">Login with Google</a> -->
+            <a href="/auth/google?prompt=select_account"type="button" class="btn" >Sign in with Google</a>
+        </form>
         <form class="login-form" action="/login" method="POST">
             <div class="form-control">
                 <label for="email">E-Mail</label>
