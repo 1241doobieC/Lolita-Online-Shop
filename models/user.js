@@ -1,15 +1,22 @@
 const mongoose = require('mongoose');
+const findOrCreate = require('mongoose-findorcreate');
+
 
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+  googleId: {
+    type: String,
+    required: false
+  },
   email: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   password: {
     type: String,
-    required: true
+    required: false
   },
   cart: {
     items: [
@@ -60,6 +67,8 @@ userSchema.methods.clearCart = function() {
   this.cart = { items: [] };
   return this.save();
 };
+
+userSchema.plugin(findOrCreate);
 
 module.exports = mongoose.model('User', userSchema);
 
