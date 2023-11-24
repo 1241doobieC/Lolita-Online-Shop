@@ -1,5 +1,30 @@
 const bcrypt = require('bcryptjs');
+const passport = require('passport');
+var GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
 const User = require('../models/user');
+
+passport.use(new GoogleStrategy({
+    clientID:     process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/auth/google/callback",
+    passReqToCallback   : true,
+    prompt: 'select_account'
+  },
+  function(request, accessToken, refreshToken, profile, done) {
+    console.log("Profile: ",profile);
+    User.findOrCreate({ googleId: profile.id, email: profile.email, },  (err, user) => {
+      return done(err, user);
+    });
+  }
+)); 
+
+passport.serializeUser((user, cb) => {
+    cb(null, user);
+});
+  
+passport.deserializeUser((obj, cb) => {
+    cb(null, obj);
+});
 
 exports.getLogin = (req, res, next) => {
     let message = req.flash('error');
@@ -73,7 +98,7 @@ exports.postSignup = (req, res, next) => {
                         return user.save();
                     })
                     .then(result => {
-                        res.redirect('/login');
+                        res.redirect('/login'); 
                     });
             }
         })
@@ -83,8 +108,34 @@ exports.postSignup = (req, res, next) => {
 }
 
 exports.postLogout = (req, res, next) => {
+    req.logout();
     req.session.destroy( err => {
         if(err) console.log(err);
         res.redirect('/');
     });
 }
+
+exports.googleLogin =  passport.authenticate('google', {
+    scope:[ 'email', 'profile' ],
+    prompt: 'select_account'
+});
+
+exports.googleCallback = (req, res, next) => {
+    passport.authenticate('google', (err, user, info) => {
+        if (err) return next(err);
+        if (!user) return res.redirect('/login');
+        req.logIn(user, (err) => {
+            if (err) {
+                return next(err);
+            }
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+            return req.session.save(err => {
+                if (err) {
+                    console.log(err);
+                }
+                res.redirect('/');
+            });
+        });
+    })(req, res, next);
+};
