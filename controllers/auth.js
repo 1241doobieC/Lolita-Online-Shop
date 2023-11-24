@@ -108,10 +108,14 @@ exports.postSignup = (req, res, next) => {
 }
 
 exports.postLogout = (req, res, next) => {
-    req.logout();
-    req.session.destroy( err => {
-        if(err) console.log(err);
-        res.redirect('/');
+    req.logout( err => {
+        if (err) { return next(err); }
+        else{
+            req.session.destroy( err => {
+                if(err) console.log(err);
+                res.redirect('/');
+            });
+        }
     });
 }
 
