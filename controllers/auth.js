@@ -156,7 +156,7 @@ exports.postReset = async (req, res, next) => {
           res.status(500).send('Error sending email');
         } else {
           console.log(info);
-          res.send('Email sent');
+          res.redirect('/login');
         }
       });
 }
