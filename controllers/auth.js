@@ -131,9 +131,36 @@ exports.getReset = (req, res, next) => {
     });
 }
 
-exports.postReset = (req, res, next) => {
+exports.postReset = async (req, res, next) => {
+    let sendMail = req.body.email;
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.GMAIL_ACCOUNT,
+          pass: process.env.GMAIL_PSD,
+        },
+      });
 
+      await transporter.verify();
+
+      const mailOptions = {
+        from: process.env.GMAIL_ACCOUNT,
+        to: sendMail,
+        subject: '爛密碼',
+        text: '不跟你說 ',
+      };
+
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.error(err);
+          res.status(500).send('Error sending email');
+        } else {
+          console.log(info);
+          res.send('Email sent');
+        }
+      });
 }
+
 
 exports.googleLogin =  passport.authenticate('google', {
     scope:[ 'email', 'profile' ],
