@@ -1,9 +1,19 @@
+const crypto = require('crypto');
+
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const nodemailer = require('nodemailer');
-
 var GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
+
 const User = require('../models/user');
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.GMAIL_ACCOUNT,
+      pass: process.env.GMAIL_PSD,
+    },
+});
 
 passport.use(new GoogleStrategy({
     clientID:     process.env.GOOGLE_CLIENT_ID,
@@ -131,34 +141,51 @@ exports.getReset = (req, res, next) => {
     });
 }
 
-exports.postReset = async (req, res, next) => {
+exports.postReset = (req, res, next) => {
     let sendMail = req.body.email;
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.GMAIL_ACCOUNT,
-          pass: process.env.GMAIL_PSD,
-        },
-      });
-
-      await transporter.verify();
-
-      const mailOptions = {
-        from: process.env.GMAIL_ACCOUNT,
-        to: sendMail,
-        subject: '爛密碼',
-        text: '不跟你說 ',
-      };
-
-      transporter.sendMail(mailOptions, (err, info) => {
-        if (err) {
-          console.error(err);
-          res.status(500).send('Error sending email');
-        } else {
-          console.log(info);
-          res.redirect('/login');
+    crypto.randomBytes(32 , ( (err, buffer) => {
+        if(err){
+            console.log(err);
+            return res.redirect('/reset');
         }
-      });
+        const token = buffer.toString('hex');
+        User.findOne({ email: sendMail})
+            .then( user => {
+                if(!user){
+                    req.flash('error', 'No account with that email found.');
+                    return res.redirect('/reset');
+                }
+                user.resetToken = token;
+                user.resetTokenExpiration = Date.now() + 300000;
+                return user.save();
+            })
+            .then(async result => {
+                await transporter.verify();
+
+                const mailOptions = {
+                    from: process.env.GMAIL_ACCOUNT,
+                    to: sendMail,
+                    subject: 'Password Reset',
+                    html: `
+                        <p>You requested a password reset</p>
+                        <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
+                    `,
+                };
+
+                transporter.sendMail(mailOptions, (err, info) => {
+                    if (err) {
+                      console.error(err);
+                      res.status(500).send('Error sending email');
+                    } else {
+                      console.log(info);
+                      res.redirect('/login');
+                    }
+                });
+            })
+            .catch(err => {
+                
+            })
+    }));
 }
 
 
