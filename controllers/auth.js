@@ -1,5 +1,7 @@
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const nodemailer = require('nodemailer');
+
 var GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
 const User = require('../models/user');
 
@@ -11,7 +13,7 @@ passport.use(new GoogleStrategy({
     prompt: 'select_account'
   },
   function(request, accessToken, refreshToken, profile, done) {
-    console.log("Profile: ",profile);
+    // console.log("Profile: ",profile);
     User.findOrCreate({ googleId: profile.id, email: profile.email, },  (err, user) => {
       return done(err, user);
     });
@@ -119,6 +121,20 @@ exports.postLogout = (req, res, next) => {
     });
 }
 
+exports.getReset = (req, res, next) => {
+    let message = req.flash('error');
+    if(message.length == 0) message = null;
+    res.render('auth/reset', {
+        path: '/reset',
+        pageTitle: 'Reset Password',
+        errorMessage: message
+    });
+}
+
+exports.postReset = (req, res, next) => {
+
+}
+
 exports.googleLogin =  passport.authenticate('google', {
     scope:[ 'email', 'profile' ],
     prompt: 'select_account'
@@ -137,7 +153,7 @@ exports.googleCallback = (req, res, next) => {
             return req.session.save(err => {
                 if (err) {
                     console.log(err);
-                }
+                } 
                 res.redirect('/');
             });
         });
