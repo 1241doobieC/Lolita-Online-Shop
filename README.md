@@ -6,10 +6,10 @@
     - Set `DB_CONNECT`, `MONGODB_URI` in your `.env`
     - Create following collections: `orders`, `products`, `sessions`, `users`
 - OAuth 2.0
-    - Using [`Google OAuth 2.0`](<https://israynotarray.com/nodejs/20220525/790433249/>)
+    - Using Google OAuth 2.0, see [`(Tutor)`](<https://israynotarray.com/nodejs/20220525/790433249/>)
     - `SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` are required in `.env`
-- [`Email sending`](<https://israynotarray.com/nodejs/20230722/1626712457/>) 
-    - Nodemailer + Google(Google OAuth 2.0 is required)
+-  Email sending, see [`(Tutor)`](<https://israynotarray.com/nodejs/20230722/1626712457/>) 
+    - Nodemailer + Gmail (Google OAuth 2.0 is required)
     - `GMAIL_ACCOUNT`, `GMAIL_PASSWORD` are required in `.env`
 
 
