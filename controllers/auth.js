@@ -156,7 +156,7 @@ exports.postReset = (req, res, next) => {
                     return res.redirect('/reset');
                 }
                 user.resetToken = token;
-                user.resetTokenExpiration = Date.now() + 300000;
+                user.resetTokenExpiration = Date.now() + 3600000;
                 return user.save();
             })
             .then(async result => {
@@ -177,7 +177,6 @@ exports.postReset = (req, res, next) => {
                       console.error(err);
                       res.status(500).send('Error sending email');
                     } else {
-                      console.log(info);
                       res.redirect('/login');
                     }
                 });
@@ -188,6 +187,53 @@ exports.postReset = (req, res, next) => {
     }));
 }
 
+exports.getNewPassword = (req, res, next) => {
+    const token = req.params.token;
+    User.find({ resetToken: token, resetTokenExpiration: { $gt: new Date()} })
+            .then(user => {
+                let message = req.flash('error');
+                if(message.length == 0) message = null;
+                res.render('auth/new-password', {
+                    path: '/new-password',
+                    pageTitle: 'Reset Password',
+                    errorMessage: message,
+                    userId: user[0]._id.toString(),
+                    passwordToken: token
+                });
+            })
+            .catch(err => {
+                console.log(err);
+            });
+}
+
+exports.postNewPassword = (req, res, next) => {
+    const newPassword = req.body.password;
+    const userId = req.body.userId;
+    const passwordToken = req.body.passwordToken;
+    let resetUser;
+    User.findOne({ 
+        resetToken: passwordToken, 
+        resetTokenExpiration:{$gt: new Date()},
+        _id: userId
+    })
+    .then(user => {
+        resetUser = user;
+        return bcrypt.hash(newPassword, 12);
+    })
+    .then( hashedPassword => {
+        resetUser.password = hashedPassword;
+        resetUser.resetToken = undefined;
+        resetUser.resetTokenExpiration = undefined;
+
+        return resetUser.save();
+    })
+    .then(result => {
+        res.redirect('/login');
+    })
+    .catch(err => {
+        console.log(err);
+    })
+}
 
 exports.googleLogin =  passport.authenticate('google', {
     scope:[ 'email', 'profile' ],
