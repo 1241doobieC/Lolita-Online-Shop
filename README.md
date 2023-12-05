@@ -11,5 +11,5 @@
 - [x] 第三方登入
 - [x] email驗證信箱
 - [ ] Stripe 串接
-- [ ] 使用者可即時聊天
+- [ ] WebSockets
 - [x] 使用者可以CRUD
