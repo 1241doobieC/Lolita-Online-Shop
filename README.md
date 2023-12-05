@@ -17,6 +17,6 @@
 - [x] 第三方登入
 - [x] email驗證信箱
 - [ ] Server side Validation
-- [ ] Stripe 串接
+- [ ] Stripe/ Line Pay 串接
 - [ ] WebSockets
 - [x] 使用者可以CRUD
